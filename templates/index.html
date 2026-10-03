@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero-row">
+    <div>
+        <h1>Subscription Dashboard</h1>
+        <p>Track your recurring payments and upcoming renewals.</p>
+    </div>
+    <a class="primary-button" href="{{ url_for('add_subscription') }}">+ Add Subscription</a>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card"><span>Active Subscriptions</span><strong>{{ active_count }}</strong></article>
+    <article class="stat-card"><span>Renewing Within 7 Days</span><strong>{{ renewing_soon }}</strong></article>
+    <article class="stat-card">
+        <span>Estimated Monthly Spending</span>
+        {% for currency, amount in monthly_totals.items() %}<strong>{{ currency }} {{ "{:,.2f}".format(amount) }}</strong>{% else %}<strong>0</strong>{% endfor %}
+    </article>
+    <article class="stat-card">
+        <span>Estimated Yearly Spending</span>
+        {% for currency, amount in yearly_totals.items() %}<strong>{{ currency }} {{ "{:,.2f}".format(amount) }}</strong>{% else %}<strong>0</strong>{% endfor %}
+    </article>
+</section>
+
+<h2>Your Subscriptions</h2>
+<section class="subscription-grid">
+{% for subscription in subscriptions %}
+    {% set days_left = (subscription.renewal_date - today).days %}
+    <article class="subscription-card">
+        <div class="card-top">
+            <div><h3>{{ subscription.name }}</h3><p>{{ subscription.category }}</p></div>
+            <span class="status {{ 'active' if subscription.status == 'Active' else 'cancelled' }}">{{ subscription.status }}</span>
+        </div>
+        <div class="price">{{ subscription.currency }} {{ "{:,.2f}".format(subscription.price) }}</div>
+        <p>{{ subscription.billing_cycle }}</p>
+        <hr>
+        <p>Next renewal: <strong>{{ subscription.renewal_date.strftime("%d %B %Y") }}</strong></p>
+        {% if subscription.status == 'Cancelled' %}
+            <p class="muted">Subscription cancelled</p>
+        {% elif days_left == 0 %}
+            <p class="danger">Renews today</p>
+        {% elif days_left == 1 %}
+            <p class="warning">Renews tomorrow</p>
+        {% else %}
+            <p class="days">{{ days_left }} days remaining</p>
+        {% endif %}
+        <div class="actions">
+            <a class="edit-button" href="{{ url_for('edit_subscription', id=subscription.id) }}">Edit</a>
+            <form method="POST" action="{{ url_for('delete_subscription', id=subscription.id) }}" onsubmit="return confirm('Delete this subscription?')">
+                <button class="delete-button" type="submit">Delete</button>
+            </form>
+        </div>
+    </article>
+{% else %}
+    <article class="empty-card">
+        <h3>No subscriptions yet</h3>
+        <p>Add your first subscription to start tracking renewals.</p>
+        <a class="primary-button" href="{{ url_for('add_subscription') }}">Add Subscription</a>
+    </article>
+{% endfor %}
+</section>
+{% endblock %}

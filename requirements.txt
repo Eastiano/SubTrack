@@ -1,0 +1,8 @@
+Flask>=3.1,<4
+Flask-SQLAlchemy>=3.1,<4
+SQLAlchemy>=2.0,<3
+psycopg2-binary>=2.9,<3
+python-dotenv>=1.0,<2
+python-dateutil>=2.9,<3
+resend>=2.0,<3
+gunicorn>=23,<24

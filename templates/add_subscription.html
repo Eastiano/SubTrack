@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="form-card">
+    <h1>Add Subscription</h1>
+    <p>Enter the recurring payment you want SubTrack to remind you about.</p>
+    <form method="POST">
+        <label>Subscription Name</label>
+        <input type="text" name="name" placeholder="Netflix" required>
+
+        <label>Category</label>
+        <select name="category">
+            {% for item in ['Entertainment','Music','Software','Gaming','Education','Fitness','Design','Other'] %}<option value="{{ item }}">{{ item }}</option>{% endfor %}
+        </select>
+
+        <div class="two-col">
+            <div><label>Price</label><input type="number" min="0" step="0.01" name="price" placeholder="7000" required></div>
+            <div><label>Currency</label><select name="currency"><option>NGN</option><option>USD</option><option>GBP</option><option>EUR</option></select></div>
+        </div>
+
+        <label>Billing Cycle</label>
+        <select name="billing_cycle"><option>Weekly</option><option selected>Monthly</option><option>Yearly</option></select>
+
+        <label>Next Renewal Date</label>
+        <input type="date" name="renewal_date" required>
+
+        <label>Remind Me</label>
+        <select name="reminder_days"><option value="1">1 day before</option><option value="3">3 days before</option><option value="7" selected>7 days before</option><option value="14">14 days before</option></select>
+
+        <label>Reminder Email</label>
+        <input type="email" name="reminder_email" placeholder="you@example.com">
+        <small>Email is optional; without it, the subscription is tracked but no email reminder is sent.</small>
+
+        <button class="primary-button full" type="submit">Save Subscription</button>
+    </form>
+</section>
+{% endblock %}
